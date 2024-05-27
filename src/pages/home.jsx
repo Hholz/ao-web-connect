@@ -3,7 +3,7 @@ import Image from "next/image"
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { ConnectButton, useActiveAddress } from "arweave-wallet-kit";
-import AoConnect from "../../functions/Aoconnect.js"
+import AoConnect from "@/functions/Aoconnect.js"
 
 import {
     Select,
@@ -32,7 +32,7 @@ const removeAnsiCodes = (str) => {
     return str.replace(/\x1b\[[0-9;]*m/g, '');
 };
 
-export function Home() {
+const Home = () => {
     const [selectedValue, setSelectedValue] = useState({});
     const [selectOptions, setSelectOptions] = useState([]);
     const [newProcessName, setNewProcessName] = useState('');
@@ -414,3 +414,4 @@ export function Home() {
         </>
     )
 }
+export default Home;
