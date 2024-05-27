@@ -282,7 +282,7 @@ const AoQueryProcesses = async (address, name='') => {
     return processList;
 }
 
-module.exports = {
+export default {
     AoMuUrlLoadBalance,
     AoCuUrlLoadBalance,
     AoSendMsg,

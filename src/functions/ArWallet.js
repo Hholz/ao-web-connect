@@ -28,12 +28,10 @@ const getPrice = async (byteSize) => {
     return arweave.ar.winstonToAr(await arweave.transactions.getPrice(byteSize))
 }
 
-module.exports = {
+export default {
     createWallet,
     isAddress,
     getAddressByJwk,
-    getAddressByFilePath,
-    getJwkByFilePath,
     getWalletBalance,
     getWalletBalanceWinston,
     getPrice
