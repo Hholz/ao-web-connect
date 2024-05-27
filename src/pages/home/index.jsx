@@ -3,7 +3,7 @@ import Image from "next/image"
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { ConnectButton, useActiveAddress } from "arweave-wallet-kit";
-import AoConnect from "@/functions/Aoconnect.js"
+import AoConnect from "@/functions/Aoconnect"
 
 import {
     Select,
