@@ -12,6 +12,10 @@ yarn dev
 pnpm dev
 # or
 bun dev
+
+
+export NODE_TLS_REJECT_UNAUTHORIZED=0
+yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
