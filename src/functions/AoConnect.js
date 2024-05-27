@@ -5,6 +5,8 @@ const MU_URL = "https://mu.ao-testnet.xyz";//https://mu.ao-testnet.xyz  https://
 const CU_URL = "https://cu.ao-testnet.xyz";//https://cu.ao-testnet.xyz  https://cu100.ao-testnet.xyz
 // const GATEWAY_URL = "https://arweave.net";
 const GATEWAY_URL = "https://ar-io.net/";
+const DEFAULT_MODULE = "1PdCJiXhNafpJbvC-sjxWTeNzbf9Q_RfUNs84GYoPm0";
+const DEFAULT_SCHEDULER = "_GQ33BkPtZrqxA84vM8Zk-N2aO0toNNu_C-l-rawrBA";
 
 function getRandomNumber(min = 1, max = 100) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -104,6 +106,10 @@ const AoMsgResult = async (MsgId, ProcessTxId) => {
     return msgResult;
 };
 
+const AoSendMsgReturnResult = async (currentWalletJwk, processTxId, Msg, Tags) => {
+    const msgId = await AoSendMsg(currentWalletJwk, processTxId, Msg, Tags);
+    return await AoMsgResult(msgId, processTxId);
+};
 
 //https://cu.ao-testnet.xyz/results/A__Gs3KRlvDWfPDRjHL_56D70U65rAvnsuGGpgpKmTY?sort=DESC&limit=10
 const AoGetLastPage = async (processTxId, Sort = 'DESC', Limit = 25) => {
@@ -130,7 +136,7 @@ const AoGetPageRecord = async (processTxId, Sort = 'DESC', Limit = 25, From = ''
     return resultsOut;
 };
 
-const AoCreateProcess = async (currentWalletJwk, moduleTxId, scheduler, Tags) => {
+const AoCreateProcess = async (currentWalletJwk, moduleTxId=DEFAULT_MODULE, scheduler=DEFAULT_SCHEDULER, Tags) => {
     const { spawn } = connect({ MU_URL: AoMuUrlLoadBalance(), CU_URL: AoCuUrlLoadBalance(), GATEWAY_URL });
 
     const processTxId = await spawn({
@@ -281,6 +287,7 @@ module.exports = {
     AoCuUrlLoadBalance,
     AoSendMsg,
     AoMsgResult,
+    AoSendMsgReturnResult,
     AoGetLastPage,
     AoGetPageRecord,
     AoCreateProcess,
@@ -291,4 +298,8 @@ module.exports = {
     AoQueryProcesses,
     AoCheckMuUrl,
     AoCheckCuUrl,
+
+    GATEWAY_URL,
+    DEFAULT_MODULE,
+    DEFAULT_SCHEDULER,
 };
