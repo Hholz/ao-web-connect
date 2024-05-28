@@ -2,6 +2,7 @@
   "name": "ao-web-connect",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -18,12 +19,15 @@
     "arweave-wallet-kit": "^1.0.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "customize-cra": "^1.0.0",
     "lucide-react": "^0.379.0",
     "next": "14.2.3",
+    "next-compose-plugins": "^2.2.1",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "webpack": "^5.91.0"
   },
   "devDependencies": {
     "postcss": "^8",

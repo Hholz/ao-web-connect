@@ -199,7 +199,7 @@ const AoGetPageRecordByApi = async (processTxId, Sort = 'DESC', Limit = 25, From
         redirect: 'follow'
     };
 
-    const response = await fetch(`https://cu.ao-testnet.xyz/results/${processTxId}?sort=DESC&limit=10`, requestOptions)
+    const response = await fetch(`https://cu.ao-testnet.xyz/results/${processTxId}?sort=DESC&limit=${Limit}&from=${From}`, requestOptions)
     const result = await response.json();
     // console.info(result)
     return result;

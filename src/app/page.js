@@ -1,4 +1,4 @@
-import Home from "@/pages/home";
+import Home from "@/app/home/page";
 import { ArweaveWalletKit } from "arweave-wallet-kit";
 
 export default function App() {

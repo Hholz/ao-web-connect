@@ -38,12 +38,24 @@ const Home = () => {
     const [newProcessName, setNewProcessName] = useState('');
     const [connected, setConnected] = useState(false);
     const [sending, setSending] = useState(false);
+    //查询游标
+    const [cursor, setCursor] = useState('');
+
     const [tableData, setTableData] = useState([]);
     const [msgTotal, setMsgTotal] = useState(0);
 
 
     const activeAddress = useActiveAddress();
     const SPAWN_NEW_LABEL = "Spawn New"
+
+    let timerId;
+
+    useEffect(() => {
+        // 清除定时器的回调函数
+        return () => {
+            clearInterval(timerId);
+        };
+    }, []);
 
     useEffect(() => {
         queryAllProcesses(activeAddress);
@@ -54,6 +66,21 @@ const Home = () => {
             setTableData(msgList.edges)
         })
     }, [selectedValue]);
+    useEffect(() => {
+        // 定义定时器回调函数
+        const fetchData = () => {
+            // 在这里调用 queryResults，并传递参数
+            if(connected) {
+                queryResults(selectedValue.id, cursor);
+            }
+        };
+        // 初始化时立即请求一次数据
+        fetchData();
+        // 设置定时器，每隔一段时间请求一次数据
+        const intervalId = setInterval(fetchData, 10000); // 5000毫秒为例，表示每隔5秒请求一次数据
+        // 在组件卸载时清除定时器
+        return () => clearInterval(intervalId);
+    }, [cursor, selectedValue]);
 
     const queryAllProcesses = (address) => {
         if (address) {
@@ -63,10 +90,43 @@ const Home = () => {
         }
     }
 
+    const queryResults = (processId, from) =>{
+        AoConnect.AoGetPageRecordByApi(processId, 'DESC', 10, from).then(resultsOut=>{
+            const resultsLength = resultsOut.edges.length;
+            const newOutputs = [];
+            for (const [index, result] of resultsOut.edges.reverse().entries()) {
+                if (result.node.Output) {
+                    if(result.node.Output.data) {
+                        console.log(typeof result.node.Output.data);
+                        if (typeof result.node.Output.data === 'string') {
+                            const newOutput = { id: output.length, command: null, response: result.node.Output.data };
+                            newOutputs.push(newOutput);
+                        } else {
+                            // if (result.node.Output.data.output) {
+                            //     const newOutput = { id: output.length, command: null, response: result.node.Output.data.output };
+                            //     newOutputs.push(newOutput);
+                            // } else {
+                            //     const newOutput = { id: output.length, command: null, response: result.node.Output.data.json };
+                            //     newOutputs.push(newOutput);
+                            // }
+                        }
+                    }
+                }
+                const isFirst = index === resultsLength-1;
+                if (isFirst) {
+                    setCursor(result.cursor)
+                    console.info(result.cursor)
+                }
+            }
+            setOutput(prevOutput => [...prevOutput, ...newOutputs]);
+        })
+    }
+
     const connectProcess = () => {
         if (window.arweaveWallet && selectedValue && selectedValue !== SPAWN_NEW_LABEL) {
             setConnected(true)
             resetConnectSuccessOutput(selectedValue.Name, selectedValue.id)
+
             // AoConnect.AoSendMsgReturnResult(window.arweaveWallet, selectedValue.id, "#Inbox", [{
             //     name: 'SDK',
             //     value: 'aoconnect'
@@ -151,7 +211,11 @@ const Home = () => {
 
     const resetConnectSuccessOutput = (processName, processId) => {
         const newOutput = { id: output.length, command: null, response: `${processName} ${processId} connected` };
-        setOutput([newOutput]);
+        setOutput(prevOutput => {
+            return [newOutput];
+        });
+
+        queryResults(selectedValue.id, cursor);
     }
 
     const handleKeyDown = (e) => {
@@ -237,6 +301,9 @@ const Home = () => {
             '37': '#ffffff', // white
         };
 
+        if (typeof text !== 'string') {
+            return text
+        }
         // 使用正则表达式匹配 ANSI 颜色代码并替换为相应的 HTML 颜色标签
         return text.replace(/\033\[(\d+)m(.*?)\033\[0m/g, (match, colorCode, content) => {
             const color = colorMap[colorCode] || '#ffffff'; // 默认为白色
@@ -329,7 +396,7 @@ const Home = () => {
                                     value={input}
                                     onChange={handleInputChange}
                                     onKeyDown={handleKeyDown}
-                                    className="bg-transparent border-none shadow-none focus:outline-none focus:ring-0 p-0 text-white ml-2"
+                                    className="bg-transparent border-none shadow-none focus:outline-none focus:ring-0 p-0 text-white ml-2 w-full"
                                     placeholder="Type a command..."
                                     autoFocus
                                 />
